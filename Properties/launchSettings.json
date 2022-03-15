@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DopeTestWinUI3 (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DopeTestWinUI3 (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
