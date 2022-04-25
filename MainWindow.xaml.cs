@@ -1,4 +1,6 @@
-﻿using Microsoft.UI;
+﻿using Azure;
+using Azure.Storage.Blobs;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -8,8 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 
@@ -436,17 +440,17 @@ namespace DopeTestWinUI3
             await Task.Delay(pauseLengthMs);
             _ = Decimal.TryParse(dopes.Text.Replace(" Dopes/s (AVG)", "").Trim(), out var resultChangeST);
 
-            startChangeReuse_Clicked(default, default);
-            await Task.Delay(testLengthMs);
-            Stop_Clicked(default, default);
-            await Task.Delay(pauseLengthMs);
-            _ = Decimal.TryParse(dopes.Text.Replace(" Dopes/s (AVG)", "").Trim(), out var resultReuseST);
+            //startChangeReuse_Clicked(default, default);
+            //await Task.Delay(testLengthMs);
+            //Stop_Clicked(default, default);
+            //await Task.Delay(pauseLengthMs);
+            //_ = Decimal.TryParse(dopes.Text.Replace(" Dopes/s (AVG)", "").Trim(), out var resultReuseST);
 
-            startGridST_Clicked(default, default);
-            await Task.Delay(testLengthMs);
-            Stop_Clicked(default, default);
-            await Task.Delay(pauseLengthMs);
-            _ = Decimal.TryParse(dopes.Text.Replace(" Dopes/s (AVG)", "").Trim(), out var resultGridST);
+            //startGridST_Clicked(default, default);
+            //await Task.Delay(testLengthMs);
+            //Stop_Clicked(default, default);
+            //await Task.Delay(pauseLengthMs);
+            //_ = Decimal.TryParse(dopes.Text.Replace(" Dopes/s (AVG)", "").Trim(), out var resultGridST);
 
             var platformVersion = "WinUI 3 (SDK 10.0.19041.23)";
 
@@ -456,15 +460,16 @@ namespace DopeTestWinUI3
                 Platform = platformVersion,
                 Build = resultST,
                 Change = resultChangeST,
-                Reuse = resultReuseST,
-                Grid = resultGridST
+                Reuse = 0,
+                Grid = 0
             };
             string jsonString = JsonConvert.SerializeObject(results);
+            dopes.Text = $"Build: {results.Build}; Change: {results.Change}";
 
             Console.WriteLine(jsonString);
 #if !DEBUG
             try
-            {S
+            {
                 var client = new BlobServiceClient(new Uri(Config.StorageUrl), new AzureSasCredential(Config.StorageSasToken));
                 var blobContainerClient = client.GetBlobContainerClient("results");
                 await blobContainerClient.CreateIfNotExistsAsync();
@@ -478,7 +483,6 @@ namespace DopeTestWinUI3
             }
             catch (Exception ex)
             {
-                throw;
             }
 #endif
         }
